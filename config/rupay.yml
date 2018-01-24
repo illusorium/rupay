@@ -1,0 +1,55 @@
+order:
+    link_lifetime: '3 days'
+
+# Gateway classes
+gateway:
+
+    monetaru:
+        MNT_ID: 12345678
+        DATA_INTEGRITY_CODE: 'secret_code'
+        currency: 'RUB' # currency code in accordance with ISO 4217 (see Helper\ISO4217)
+        method: 'POST'
+        test_mode: 1
+        fail_url: 'https://example.org/payment_fail.html'
+        success_url: 'https://example.org/payment_success.html'
+
+    sberbank:
+        userName: 'merchant-api'
+        password: 'xxx'
+        test_mode: 1
+        success_url: 'https://example.org/payment_success.html'
+#        callback_orderNumber: 'transaction_id' # Callback request contains parameter "orderNumber". If it corresponds another order property (not order_number) then real property must be indicated there
+#        callback_use_checksum: 1 # https://securepayments.sberbank.ru/wiki/doku.php/integration:api:callback:start
+#        secret_key: 'top_secret'
+
+# Online tills
+till:
+    modulkassa:
+        test_mode: 1
+        login: '12345678-1234-1234-1234-123456789012'
+        password: 'xxx'
+
+        # URL to which webhooks with document status will be sent
+        responseURL: 'https://example.org/payment/callback.php?transaction_id={{transaction_id}}'
+#        responseURL: '/payment/callback.php?{{hash}}'
+#        responseURL: '/payment/callbackURL/{{hash}}'
+
+        # VAT tag value in accordance with 54-FZ (see Helper\FZ54)
+        vat_tag: 1105
+
+# Database parameters
+database:
+      driver: 'mysql'
+      host: 'localhost'
+      database: 'db_name'
+      username: 'db_user'
+      password: 'db_password'
+      charset: 'utf8'
+      collation: 'utf8_general_ci'
+      prefix: 'rupay_'
+
+# Setting default gateway or till name allows creating corresponding objects
+# with Gateway::create() or Till::create() respectively, without needing to specify concrete name.
+default:
+    gateway: 'sberbank'
+    till: 'modulkassa'
