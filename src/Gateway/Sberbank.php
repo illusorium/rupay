@@ -90,22 +90,28 @@ class Sberbank extends Gateway
             'returnUrl'   => $returnUrl
         ];
 
-        if ($orderNumber !== $order->order_number) {
-            $options['jsonParams']  = json_encode(['merchantOrderId' => $order->order_number]);
-
-        }
-
         if ($validThrough = $order->validThrough()) {
             $options['expirationDate'] = date('c', $validThrough);
         } elseif (!empty($this->config['link_lifetime'])) {
             $options['sessionTimeoutSecs'] = strtotime($this->config['link_lifetime']);
         }
 
+        if (empty($orderNumber)) {
+            $customParam = Arr::get($this->config, 'orderNumber');
+            if (!empty($customParam)) {
+                $orderNumber = $order->$customParam;
+            }
+        }
         $options['orderNumber'] = !empty($orderNumber) ? $orderNumber : $order->order_number;
+
         if (preg_match('|[а-я]|ui', $options['orderNumber'])) {
             throw new Exception(
                 "Sberbank API: wrong orderNumber \"{$options['orderNumber']}\" - must not contain cyrillic letters"
             );
+        }
+
+        if ($orderNumber !== $order->order_number) {
+            $options['jsonParams']  = json_encode(['merchantOrderId' => $order->order_number]);
         }
 
         if (!empty($description)) {

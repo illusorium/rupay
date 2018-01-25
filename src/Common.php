@@ -65,6 +65,12 @@ class Common
     }
 
 
+    public function isTestMode()
+    {
+        return $this->testMode;
+    }
+
+
     /**
      * Validates config array
      *
