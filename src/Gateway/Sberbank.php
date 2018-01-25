@@ -157,7 +157,7 @@ class Sberbank extends Gateway
     /**
      * {@inheritdoc}
      */
-    public function getPaymentUrl($order)
+    public function getPaymentUrl($order = null)
     {
         return $this->registerOrder($order);
     }
@@ -253,7 +253,7 @@ class Sberbank extends Gateway
 
         // There is also "mdOrder" parameter (order number at the gateway) which also can be used to find local order
 
-        $customField = Arr::get($this->config, 'callback_orderNumber');
+        $customField = Arr::get($this->config, 'orderNumber');
         $field = $customField ?: 'order_number';
 
         return Order::findOrder([

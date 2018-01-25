@@ -61,14 +61,14 @@ class Monetaru extends Gateway
      */
     public function registerOrder($order, $lifetime = null, $orderNumber = null, $description = null)
     {
-        return true;
+        return $this->getPaymentUrl();
     }
 
 
     /**
      * {@inheritdoc}
      */
-    public function getPaymentUrl($order)
+    public function getPaymentUrl($order = null)
     {
         return $this->testMode ? self::PAYMENT_URL_TEST : self::PAYMENT_URL;
     }

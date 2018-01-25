@@ -80,7 +80,7 @@ interface GatewayInterface
      * @param  Order $order
      * @return string
      */
-    public function getPaymentUrl($order);
+    public function getPaymentUrl($order = null);
 
 
     /**

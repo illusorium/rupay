@@ -38,7 +38,7 @@ class Structure
             ]
         ],
         'payment' => [
-            'table' => 'payments',
+            'table' => 'orders_payments',
             'fields' => [
                 'private' => [
                     'id', 'order_id', 'gateway', 'created_at', 'updated_at'

@@ -19,7 +19,7 @@ gateway:
         test_mode: 1
         success_url: 'https://example.org/payment/success.html'
         fail_url: 'https://example.org/payment/fail.html'
-#        orderNumber: 'transaction_id' # Custom order parameter to be using instead of real order_number at the gateway
+#        orderNumber: 'transaction_id' # Custom order parameter to be using instead of real order_number at the gateway (could be useful if order data could be edited after initial registration)
 #        callback_use_checksum: 1 # https://securepayments.sberbank.ru/wiki/doku.php/integration:api:callback:start
 #        secret_key: 'top_secret'
 
