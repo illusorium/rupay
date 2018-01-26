@@ -37,14 +37,6 @@ abstract class Gateway extends Common implements Gateway\GatewayInterface, Callb
     }
 
 
-    private function getKey()
-    {
-        $class = last(explode('\\', static::class));
-        $suffix = $this->testMode ? 'test' : 'prod';
-        return $class . '_' . $suffix;
-    }
-
-
     /**
      * @param  Order $order
      * @param  bool  $createIfNotExists

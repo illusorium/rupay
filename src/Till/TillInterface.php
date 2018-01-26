@@ -1,6 +1,7 @@
 <?php
 namespace Rupay\Till;
 
+use Rupay\Exception;
 use Rupay\Order;
 
 /**
@@ -14,6 +15,7 @@ interface TillInterface
      * Check status of fiscalization service
      *
      * @return mixed
+     * @throws Exception
      */
     public function getServiceStatus();
 
@@ -26,6 +28,7 @@ interface TillInterface
      * @param  int    $docType      Code of operation type: sale, refund, etc.
      * @param  string $paymentType  Payment method: card, cash, etc.
      * @return mixed
+     * @throws Exception
      */
     public function sendReceipt($order, $responseURL = null, $docType = null, $paymentType = null);
 
@@ -35,6 +38,7 @@ interface TillInterface
      *
      * @param  Order|string $id
      * @return mixed
+     * @throws Exception
      */
     public function getReceiptStatus($id);
 }

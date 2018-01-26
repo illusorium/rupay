@@ -65,9 +65,23 @@ class Common
     }
 
 
+    /**
+     * @return bool
+     */
     public function isTestMode()
     {
         return $this->testMode;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getKey()
+    {
+        $class = last(explode('\\', static::class));
+        $suffix = $this->isTestMode() ? 'test' : 'prod';
+        return $class . '_' . $suffix;
     }
 
 
