@@ -7,6 +7,7 @@ use Rupay\Gateway;
 use Rupay\Helper\Arr;
 use Rupay\Helper\ISO4217;
 use Rupay\Order;
+use Rupay\Payment;
 
 /**
  * @link https://securepayments.sberbank.ru/wiki/doku.php/integration:api:start#%D0%B8%D0%BD%D1%82%D0%B5%D1%80%D1%84%D0%B5%D0%B9%D1%81_rest
@@ -171,6 +172,60 @@ class Sberbank extends Gateway
         // Declining orders via API is not available so far, although it could be done from the operator panel
 
         parent::processOutdatedPaymentData($payment);
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPaymentStatus($object)
+    {
+        $options = [
+            'userName'    => $this->config['userName'],
+            'password'    => $this->config['password']
+        ];
+
+        if ($object instanceof Order) {
+            $order = $object;
+            $payment = $object->payment;
+        } elseif ($object instanceof Payment) {
+            $payment = $object;
+            $order = $payment->order;
+        } else {
+            throw new \InvalidArgumentException("getPaymentStatus() expects argument of type \Rupay\Order or \Rupay\Payment");
+        }
+
+        if (!empty($payment->gateway_order_id)) {
+            $options['orderId'] = $payment->gateway_order_id;
+        } else {
+
+            $customParam = Arr::get($this->config, 'orderNumber');
+            if (!empty($customParam)) {
+                $orderNumber = $order->$customParam;
+            } else {
+                $orderNumber = $order->order_number;
+            }
+
+            if (empty($orderNumber)) {
+                throw new Exception("Parameter $customParam is empty");
+            }
+            $options['orderNumber'] = $orderNumber;
+        }
+
+        try {
+            $response = self::$client->request(
+                $this->method,
+                $this->baseURI . '/getOrderStatusExtended.do',
+                ['form_params' => $options]
+            );
+
+            return \GuzzleHttp\json_decode($response->getBody(), true);
+
+        } catch (ClientException $e) {
+
+            $response = $e->getResponse()->getBody()->getContents();
+            throw new Exception($response, $e->getCode());
+        }
     }
 
 

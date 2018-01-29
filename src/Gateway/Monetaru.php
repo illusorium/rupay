@@ -68,6 +68,16 @@ class Monetaru extends Gateway
     /**
      * {@inheritdoc}
      */
+    public function getPaymentStatus($object)
+    {
+        // TODO
+        return false;
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
     public function getPaymentUrl($order = null)
     {
         return $this->testMode ? self::PAYMENT_URL_TEST : self::PAYMENT_URL;

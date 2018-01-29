@@ -54,5 +54,6 @@ echo '<strong>Payment link hash:</strong> ' . $order->hash . PHP_EOL;
 //echo '<strong>Order signature:</strong> '   . $gateway->sign($order) . PHP_EOL;
 echo '<strong>Payment page:</strong> '      . $gateway->getPaymentUrl($order) . PHP_EOL;
 echo '<strong>Order data:</strong> '        . print_r($order->toArray(), true);
+echo '<strong>Payment data:</strong> '      . print_r($gateway->getPaymentStatus($order), true);
 
 echo '</pre>';

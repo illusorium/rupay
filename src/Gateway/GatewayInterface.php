@@ -2,8 +2,10 @@
 namespace Rupay\Gateway;
 
 
+use Rupay\Exception;
 use Rupay\Order;
 use GuzzleHttp\Psr7\Response;
+use Rupay\Payment;
 
 interface GatewayInterface
 {
@@ -72,6 +74,14 @@ interface GatewayInterface
      * @return mixed
      */
     public function registerOrder($order, $orderNumber = null, $description = null);
+
+
+    /**
+     * @param  Payment|Order $object
+     * @return mixed
+     * @throws Exception
+     */
+    public function getPaymentStatus($object);
 
 
     /**
