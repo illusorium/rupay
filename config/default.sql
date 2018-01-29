@@ -12,7 +12,7 @@ CREATE TABLE `rupay_orders` (
   `passport` VARCHAR(256) NOT NULL,
   `inn` VARCHAR(16) NOT NULL,
   `comment` VARCHAR(1024) NOT NULL,
-  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME DEFAULT NULL,
   `paid` DATETIME DEFAULT NULL,
   `fiscalized` DATETIME DEFAULT NULL
@@ -46,7 +46,7 @@ ALTER TABLE `rupay_orders_items`
 
 
 -- Payments table
-CREATE TABLE `rupay_payments` (
+CREATE TABLE `rupay_orders_payments` (
   `id` INT(11) NOT NULL,
   `order_id` INT(11) NOT NULL,
   `gateway` VARCHAR(64) NOT NULL,
@@ -54,16 +54,16 @@ CREATE TABLE `rupay_payments` (
   `payment_url` VARCHAR(256) DEFAULT NULL,
   `gateway_order_id` VARCHAR(256) DEFAULT NULL,
   `data` VARCHAR(1024) NOT NULL,
-  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-ALTER TABLE `rupay_payments`
+ALTER TABLE `rupay_orders_payments`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_order_id` (`order_id`),
   MODIFY `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   CHANGE `order_id` `order_id` INT(11) UNSIGNED NOT NULL;
 
-ALTER TABLE `rupay_payments`
-  ADD CONSTRAINT `rupay_payments_ibfk_1`
+ALTER TABLE `rupay_orders_payments`
+  ADD CONSTRAINT `rupay_orders_payments_ibfk_1`
 FOREIGN KEY (`order_id`) REFERENCES `rupay_orders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
