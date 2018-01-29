@@ -111,6 +111,41 @@ class Modulkassa extends Till
     /**
      * {@inheritdoc}
      */
+    public function isReady($data = [])
+    {
+        if (empty($data)) {
+            $data = $this->getServiceStatus();
+        }
+        return $this->isTestMode() || Arr::get((array) $data, 'status') === 'READY';
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function lastCheck($data = [], $dateFormat = 'Y-m-d H:i:s')
+    {
+        if ($this->isTestMode()) {
+            return $dateFormat ? date($dateFormat) : time();
+        }
+
+        if (empty($data)) {
+            $data = $this->getServiceStatus();
+        }
+
+        if ($dateTime = Arr::get($data, 'dateTime')) {
+            $dateTime = strtotime($dateTime);
+        } else {
+            $dateTime = 0;
+        }
+
+        return $dateFormat ? date($dateFormat, $dateTime) : $dateTime;
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
     public function sendReceipt(
         $order,
         $responseURL = null,

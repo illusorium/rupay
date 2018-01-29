@@ -21,6 +21,21 @@ interface TillInterface
 
 
     /**
+     * @param array $data
+     * @return bool
+     */
+    public function isReady($data = []);
+
+
+    /**
+     * @param array $data
+     * @param mixed $dateFormat Date format to be returned or false/null to return time instead of date
+     * @return string|int
+     */
+    public function lastCheck($data = [], $dateFormat = 'Y-m-d H:i:s');
+
+
+    /**
      * Prepare a document (receipt) with order information and send it to a fiscalization service
      *
      * @param  Order  $order
