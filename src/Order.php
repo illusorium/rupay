@@ -260,6 +260,34 @@ class Order extends Model
     }
 
 
+    /**
+     * Возвращает список заказов из БД, у которых свойство paid в заданном диапазоне.
+     * После этого следует проверить статус каждого найденного заказа на шлюзе,
+     * чтобы подтвердить оплату (и исключить возможность смены его статуса в БД вручную)
+     *
+     * @param  null $from
+     * @param  null $to
+     * @return array
+     */
+    public static function getPaidOrdersByDateRange($from = null, $to = null)
+    {
+        $format = 'Y-m-d H:i:s';
+        $from = date($format, $from ? strtotime($from) : null);
+
+        if (empty($to)) {
+            $to = time();
+        } elseif (preg_match('|^\d{4}-?\d{2}-?\d{2}$|', $to)) {
+            $to = strtotime($to . ' 23:59:59');
+        } else {
+            $to = strtotime($to);
+        }
+        $to = date($format, $to);
+
+        $model = new self();
+        return $model->whereBetween('paid', [$from, $to])->get();
+    }
+
+
     public function getItems()
     {
         return $this->orderItems ?: [];

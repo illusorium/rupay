@@ -22,6 +22,16 @@ if ($order) {
             if ($status['operation'] = $gateway::PAYMENT_STATUS_DEPOSITED && !empty($status['status'])) {
                 $order->paid = date('Y-m-d H:i:s');
                 $order->save();
+
+                /*
+                 * Отправка чека на сервер фискализации
+                 *
+                 * TODO $till->assignedToGateway()
+                 * если касса привязана к шлюзу (напрмер, Сбербанк + АТОЛ),
+                 * шлюз отправляет чеки автоматически, отправка чека вручную не требуется
+                 */
+//                $till = Rupay\Till::create();
+//                $till->sendReceipt($order);
             }
         }
         $response = $gateway->setResponseSuccess();
