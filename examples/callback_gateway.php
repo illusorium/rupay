@@ -19,7 +19,7 @@ if ($order) {
     if ($gateway->checkSignature($order)) {
 
         if ($status = $gateway->getCallbackOperationStatus()) {
-            if ($status['operation'] = $gateway::PAYMENT_STATUS_DEPOSITED && !empty($status['status'])) {
+            if ($status['operation'] = $gateway::ORDER_STATUS_DEPOSITED && !empty($status['status'])) {
                 $order->paid = date('Y-m-d H:i:s');
                 $order->save();
 

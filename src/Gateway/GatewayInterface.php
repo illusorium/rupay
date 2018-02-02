@@ -9,12 +9,6 @@ use Rupay\Payment;
 
 interface GatewayInterface
 {
-    // Possible operation statuses (could be used in processing of callback notifications)
-    const PAYMENT_STATUS_DEPOSITED = 1; // операция завершения
-    const PAYMENT_STATUS_REVERSED  = 2; // операция отмены
-    const PAYMENT_STATUS_REFUNDED  = 3; // операция возврата
-    const PAYMENT_STATUS_APPROVED  = 4; // операция удержания (холдирования) суммы (для двухстадийных платежей)
-
     /**
      * Returns order signature that can be used for API requests for some gateways
      * Возвращает контрольную сумму заказа. Она нужна для выполнения запросов к API некоторых сервисов.

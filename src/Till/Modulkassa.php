@@ -30,9 +30,6 @@ class Modulkassa extends Till
     const CHECK_URI       = '/v1/status';                          // для проверки готовности сервиса фискализации
     const DATA_URI        = '/v1/doc';                             // для отправки документов
 
-    const DOCTYPE_SALE   = 'SALE';   // тип документа - продажа
-    const DOCTYPE_RETURN = 'RETURN'; // тип документа - возврат
-
     const PAYMENT_CARD = 'CARD';     // оплата картой
     const PAYMENT_CASH = 'CASH';     // оплата наличными
 
@@ -149,15 +146,16 @@ class Modulkassa extends Till
     public function sendReceipt(
         $order,
         $responseURL = null,
-        $docType = self::DOCTYPE_SALE,
+        $docType = self::ORDER_STATUS_DEPOSITED,
         $paymentType = self::PAYMENT_CARD
     ) {
         if (empty($order)) {
             throw new Exception('Order data must not be empty');
         }
-        if (!in_array($docType, [self::DOCTYPE_SALE, self::DOCTYPE_RETURN])) {
+        if (!in_array($docType, [self::ORDER_STATUS_DEPOSITED, self::ORDER_STATUS_REFUNDED])) {
             throw new Exception("Incorrect document type $docType");
         }
+        $docType = ($docType === self::ORDER_STATUS_DEPOSITED) ? 'SALE' : 'RETURN';
 
         $email = $order->email;
         if (empty($email)) {

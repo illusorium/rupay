@@ -137,7 +137,7 @@ class Monetaru extends Gateway
         }
 
         return [
-            'operation' => self::PAYMENT_STATUS_DEPOSITED,
+            'operation' => self::ORDER_STATUS_DEPOSITED,
             'status'    => true
         ];
     }

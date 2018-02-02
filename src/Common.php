@@ -6,6 +6,12 @@ use GuzzleHttp\Psr7\Response;
 
 class Common
 {
+    // Possible operation statuses (could be used in processing of callback notifications)
+    const ORDER_STATUS_DEPOSITED = 1; // операция завершения
+    const ORDER_STATUS_REVERSED  = 2; // операция отмены
+    const ORDER_STATUS_REFUNDED  = 3; // операция возврата
+    const ORDER_STATUS_APPROVED  = 4; // операция удержания (холдирования) суммы (для двухстадийных платежей)
+
     protected $config = [];
     protected $requiredConfigParams = ['login', 'password'];
 
