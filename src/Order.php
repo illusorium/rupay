@@ -17,7 +17,7 @@ class Order extends Model
     }
 
 
-    protected function checkTransactionId($forceUpdate = false)
+    public function checkTransactionId($forceUpdate = false)
     {
         $transactionId = $this->transaction_id;
         if (empty($transactionId) || $forceUpdate) {
