@@ -11,7 +11,7 @@ use Rupay\Helper\Response as R;
 
 $data = $_REQUEST;
 
-if (empty($data['order_number'])/* || empty($data['items'])*/) {
+if (empty($data['order_number']) || empty($data['items'])) {
     R::render(
         R::set('Bad Request', 400)
     );

@@ -2,10 +2,13 @@
 namespace Rupay\Gateway;
 
 use GuzzleHttp\Exception\ClientException;
+use Rupay\Config;
 use Rupay\Exception;
 use Rupay\Gateway;
 use Rupay\Helper\Arr;
+use Rupay\Helper\FZ54;
 use Rupay\Helper\ISO4217;
+use Rupay\Item;
 use Rupay\Order;
 use Rupay\Payment;
 
@@ -39,11 +42,15 @@ class Sberbank extends Gateway
      */
     protected $method = 'POST';
 
+
+    /**
+     * {@inheritdoc}
+     */
     protected function validateConfig($config)
     {
         parent::validateConfig($config);
         if (!empty($config['currency']) && !in_array($config['currency'], ISO4217::$currencyCodes)) {
-            throw new \InvalidArgumentException("Incorrect MNT_CURRENCY_CODE value \"{$config['MNT_CURRENCY_CODE']}\"");
+            throw new \InvalidArgumentException("Incorrect currency code \"{$config['currency']}\"");
         }
         if (!empty($config['method'])) {
             $method = strtoupper($config['method']);
@@ -82,20 +89,11 @@ class Sberbank extends Gateway
             return $stored;
         }
 
-        $returnUrl = Arr::get($this->config, 'success_url');
-
         $options = [
             'userName'    => $this->config['userName'],
             'password'    => $this->config['password'],
-            'amount'      => $order->getSum() * 100, // копейки/центы
-            'returnUrl'   => $returnUrl
+            'amount'      => $order->getSum() * 100 // копейки/центы
         ];
-
-        if ($validThrough = $order->validThrough()) {
-            $options['expirationDate'] = date('c', $validThrough);
-        } elseif (!empty($this->config['link_lifetime'])) {
-            $options['sessionTimeoutSecs'] = strtotime($this->config['link_lifetime']);
-        }
 
         if (empty($orderNumber)) {
             $customParam = Arr::get($this->config, 'orderNumber');
@@ -115,15 +113,98 @@ class Sberbank extends Gateway
             $options['jsonParams']  = json_encode(['merchantOrderId' => $order->order_number]);
         }
 
+        if (!empty($this->config['currency'])) {
+            $options['currency'] = $this->config['currency'];
+        }
+        if (!empty($this->config['success_url'])) {
+            $options['returnUrl'] = $this->config['success_url'];
+        }
+        if (!empty($this->config['fail_url'])) {
+            $options['failUrl'] = $this->config['fail_url'];
+        }
+
         if (!empty($description)) {
             $options['description'] = $description;
         }
 
-        if (!empty($this->config['fail_url'])) {
-            $options['failUrl'] = $this->config['fail_url'];
+        if ($validThrough = $order->validThrough()) {
+            $options['expirationDate'] = date('c', $validThrough);
+        } elseif (!empty($this->config['link_lifetime'])) {
+            $options['sessionTimeoutSecs'] = strtotime($this->config['link_lifetime']);
         }
-        if (!empty($this->config['currency'])) {
-            $options['currency'] = $this->config['currency'];
+
+        if (!empty($this->config['send_items'])) {
+
+            $items = $order->getItems();
+            if (empty($items)) {
+                throw new Exception('Order must contain at least one item to be registered');
+            }
+
+            if (!empty($this->config['auto_fiscalization'])) {
+
+                $taxSystem = Config::get('settings.tax_system');
+                if (!in_array($taxSystem, FZ54::$taxSystems)) {
+                    throw new Exception("Invalid tax system index ($taxSystem)");
+                }
+                $options['taxSystem'] = $taxSystem;
+
+                $vat = Config::get('settings.vat_tag');
+                switch ($vat) {
+                    case FZ54::VAT_NONE:   $tax = 0; break;
+                    case FZ54::VAT_0:      $tax = 1; break;
+                    case FZ54::VAT_10:     $tax = 2; break;
+                    case FZ54::VAT_18:     $tax = 3; break;
+                    case FZ54::VAT_10_110: $tax = 4; break;
+                    case FZ54::VAT_18_118: $tax = 5; break;
+                    default:
+                        throw new Exception("Invalid vat tag value ($vat)");
+                }
+            }
+
+            $orderBundle = [
+                'cartItems' => [
+                    'items' => []
+                ]
+            ];
+
+            $customerDetails = [];
+            if ($order->email) {
+                $customerDetails['email'] = $order->email;
+            }
+            if ($order->phone) {
+                $customerDetails['phone'] = $order->phone;
+            }
+
+            if (!empty($customerDetails)) {
+                $orderBundle['customerDetails'] = $customerDetails;
+            }
+
+            /**
+             * @var Item $item
+             */
+            foreach ($items as $i => $item) {
+                $cartItem = [
+                    'positionId' => $i + 1,
+                    'name'       => $item->product,
+                    'quantity'   => [
+                        'value'   => $item->quantity,
+                        'measure' => $item->units
+                    ],
+                    'itemAmount' => $item->getCost() * 100,
+                    'itemCode'   => $options['orderNumber'] . '-' . $i
+                ];
+
+                if (isset($tax)) {
+                    $cartItem['tax'] = [
+                        'taxType' => $tax
+                    ];
+                    $cartItem['itemPrice']  = $item->price * 100;
+                }
+
+                array_push($orderBundle['cartItems']['items'], $cartItem);
+            }
+
+            $options['orderBundle'] = json_encode($orderBundle);
         }
 
         $data = $this->sendRegisterRequest($options);
@@ -132,6 +213,11 @@ class Sberbank extends Gateway
     }
 
 
+    /**
+     * @param $params
+     * @return mixed
+     * @throws Exception
+     */
     protected function sendRegisterRequest($params)
     {
         try {

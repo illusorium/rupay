@@ -62,10 +62,16 @@ class Common
 
     /**
      * @param array $config
+     * @throws Exception
      */
     protected function __construct($config)
     {
-        $this->validateConfig($config);
+        if (empty($config['vat_tag'])) {
+            if ($vat = Config::get('settings.vat_tag')) {
+                $config['vat_tag'] = $vat;
+            }
+        }
+        static::validateConfig($config);
         $this->config = $config;
         $this->testMode = !empty($config['test_mode']);
     }

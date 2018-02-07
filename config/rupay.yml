@@ -1,17 +1,12 @@
+settings:
+    vat_tag: 1105 # Код типа НДС по 54-ФЗ   (see Helper\FZ54)
+    tax_system: 0 # Система налогообложения (see Helper\FZ54)
+
 order:
-    link_lifetime: '3 days'
+    link_lifetime: '3 days' # Время действия ссылки на оплату заказа по умолчанию
 
-# Gateway classes
+# Платежные шлюзы
 gateway:
-
-    monetaru:
-        MNT_ID: 12345678
-        DATA_INTEGRITY_CODE: 'secret_code'
-        currency: 'RUB' # currency code in accordance with ISO 4217 (see Helper\ISO4217)
-        method: 'POST'
-        test_mode: 1
-        fail_url: 'https://example.org/payment_fail.html'
-        success_url: 'https://example.org/payment_success.html'
 
     sberbank:
         userName: 'merchant-api'
@@ -19,26 +14,40 @@ gateway:
         test_mode: 1
         success_url: 'https://example.org/payment/success.html'
         fail_url: 'https://example.org/payment/fail.html'
-#        orderNumber: 'transaction_id' # Custom order parameter to be using instead of real order_number at the gateway (could be useful if order data could be edited after initial registration)
-#        callback_use_checksum: 1 # https://securepayments.sberbank.ru/wiki/doku.php/integration:api:callback:start
-#        secret_key: 'top_secret'
 
-# Online tills
+        send_items: 1         # Нужно ли отправлять содержимое корзины на шлюз вместе с остальными параметрами заказа
+        auto_fiscalization: 1 # На шлюзе настроена автоматическая фискализация чеков (например, Сбербанк + Атол.Онлайн)
+
+        # Параметр, который будет передаваться на шлюз вместо номера заказа.
+        # Сбербанк запрещает обновление уже зарегистрированного заказа, поэтому если может понадобиться
+        # обновление заказа уже после регистрации на шлюзе, лучше использовать параметр, отличный от order_number
+#        orderNumber: 'transaction_id'
+
+#        callback_use_checksum: 1 # Настроено получение уведомлений обратного вызова с контрольной суммой
+#        secret_key: 'top_secret' # Секретный ключ для проверки корректности контрольной суммы в callback-запросах
+
+    monetaru:
+        MNT_ID: 12345678
+        DATA_INTEGRITY_CODE: 'secret_code'
+        currency: 'RUB' # Код валюты по ISO 4217 (see Helper\ISO4217)
+        method: 'POST'
+        test_mode: 1
+        fail_url: 'https://example.org/payment_fail.html'
+        success_url: 'https://example.org/payment_success.html'
+
+# Онлайн-кассы
 till:
     modulkassa:
         test_mode: 1
         login: '12345678-1234-1234-1234-123456789012'
         password: 'xxx'
 
-        # URL to which webhooks with document status will be sent
+        # Маска URL для уведомлений от сервера фискализации
         responseURL: 'https://example.org/payment/callback.php?transaction_id={{transaction_id}}'
 #        responseURL: '/payment/callback.php?{{hash}}'
 #        responseURL: '/payment/callbackURL/{{hash}}'
 
-        # VAT tag value in accordance with 54-FZ (see Helper\FZ54)
-        vat_tag: 1105
-
-# Database parameters
+# Параметры БД
 database:
       driver: 'mysql'
       host: 'localhost'
@@ -49,8 +58,8 @@ database:
       collation: 'utf8_general_ci'
       prefix: 'rupay_'
 
-# Setting default gateway or till name allows creating corresponding objects
-# with Gateway::create() or Till::create() respectively, without needing to specify concrete name.
+# Классы шлюза и кассы по умолчанию
+# Если заданы, объекты можно будет создавать без аргументов: Gateway::create() и Till::create() соответственно
 default:
     gateway: 'sberbank'
     till: 'modulkassa'
