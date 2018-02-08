@@ -172,7 +172,10 @@ class Sberbank extends Gateway
                 $customerDetails['email'] = $order->email;
             }
             if ($order->phone) {
-                $customerDetails['phone'] = $order->phone;
+                $phone = preg_replace('|[^\d]|', '', $order->phone);
+                if (!empty($phone)) {
+                    $customerDetails['phone'] = $phone;
+                }
             }
 
             if (!empty($customerDetails)) {
