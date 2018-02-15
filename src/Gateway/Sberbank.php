@@ -220,6 +220,7 @@ class Sberbank extends Gateway
      * @param $params
      * @return mixed
      * @throws Exception
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     protected function sendRegisterRequest($params)
     {
@@ -372,10 +373,11 @@ class Sberbank extends Gateway
         }
 
         switch ($data['operation']) {
-            case 'deposited': $operation = self::ORDER_STATUS_DEPOSITED; break;
-            case 'reversed' : $operation = self::ORDER_STATUS_REVERSED; break;
-            case 'refunded' : $operation = self::ORDER_STATUS_REFUNDED; break;
-            case 'approved' : $operation = self::ORDER_STATUS_APPROVED; break;
+            case 'deposited'        : $operation = self::ORDER_STATUS_DEPOSITED; break;
+            case 'reversed'         : $operation = self::ORDER_STATUS_REVERSED; break;
+            case 'refunded'         : $operation = self::ORDER_STATUS_REFUNDED; break;
+            case 'approved'         : $operation = self::ORDER_STATUS_APPROVED; break;
+            case 'declinedByTimeout': $operation = self::ORDER_STATUS_APPROVED; break;
             default: return false;
         }
 

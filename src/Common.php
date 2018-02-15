@@ -11,6 +11,7 @@ class Common
     const ORDER_STATUS_REVERSED  = 2; // операция отмены
     const ORDER_STATUS_REFUNDED  = 3; // операция возврата
     const ORDER_STATUS_APPROVED  = 4; // операция удержания (холдирования) суммы (для двухстадийных платежей)
+    const ORDER_STATUS_DECLINED  = 5; // заказ отклонен (например, закончилось время жизни заказа на шлюзе)
 
     protected $config = [];
     protected $requiredConfigParams = ['login', 'password'];
