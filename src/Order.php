@@ -21,9 +21,10 @@ class Order extends Model
     {
         $transactionId = $this->transaction_id;
         if (empty($transactionId) || $forceUpdate) {
-            $orderNumber = preg_replace('|[ а-я]|ui', '', $this->order_number);
+            $orderNumber = preg_replace('|[ а-я%:;.,!?]|ui', '', $this->order_number);
+            $orderNumber = str_replace(['\\', '/'], ['-', '-'], $orderNumber);
             $this->transaction_id = substr($orderNumber . '-' . date('ymdHis') . '-' . rand(10, 99), 0, 30);
-            $this->transaction_id = ltrim($this->transaction_id, ' _-/');
+            $this->transaction_id = ltrim($this->transaction_id, '_-');
         }
         return $this->transaction_id;
     }

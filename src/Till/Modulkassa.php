@@ -9,8 +9,7 @@ use Rupay\Order;
 use Rupay\Till;
 
 /**
- * @link http://modulkassa.ru/upload/medialibrary/abb/api-avtomaticheskoy-fiskalizatsii-chekov-internet_magazinov-_ver.1.2_.pdf
- * @link http://modulkassa.ru/upload/medialibrary/09c/09ccad2a2e765ba73dd9293987cbe969.pdf
+ * @link https://modulkassa.ru/static/files/api-avtomaticheskoy-fiskalizatsii-chekov-internet_magazinov.pdf
  *
  * @package Rupay\Till
  */
