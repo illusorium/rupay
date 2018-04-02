@@ -377,7 +377,7 @@ class Sberbank extends Gateway
             case 'reversed'         : $operation = self::ORDER_STATUS_REVERSED; break;
             case 'refunded'         : $operation = self::ORDER_STATUS_REFUNDED; break;
             case 'approved'         : $operation = self::ORDER_STATUS_APPROVED; break;
-            case 'declinedByTimeout': $operation = self::ORDER_STATUS_APPROVED; break;
+            case 'declinedByTimeout': $operation = self::ORDER_STATUS_DECLINED; break;
             default: return false;
         }
 
