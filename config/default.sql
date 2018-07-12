@@ -15,7 +15,9 @@ CREATE TABLE `rupay_orders` (
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME DEFAULT NULL,
   `paid` DATETIME DEFAULT NULL,
-  `fiscalized` DATETIME DEFAULT NULL
+  `fiscalized` DATETIME DEFAULT NULL,
+  `refunded` DATETIME DEFAULT NULL,
+  `refund_fiscalized` DATETIME DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE `rupay_orders`

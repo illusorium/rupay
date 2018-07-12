@@ -9,7 +9,7 @@ use Rupay\Order;
 use Rupay\Till;
 
 /**
- * @link https://modulkassa.ru/static/files/api-avtomaticheskoy-fiskalizatsii-chekov-internet_magazinov.pdf
+ * @link https://support.modulkassa.ru/upload/medialibrary/abb/api-avtomaticheskoy-fiskalizatsii-chekov-internet_magazinov-_ver.1.2_.pdf
  *
  * @package Rupay\Till
  */
@@ -67,6 +67,7 @@ class Modulkassa extends Till
      * @param  array  $body
      * @return array
      * @throws Exception
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     protected function requestWrapper($method, $uri, $body = null)
     {

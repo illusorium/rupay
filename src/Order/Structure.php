@@ -17,7 +17,7 @@ class Structure
             'fields' => [
                 'private' => [
                     'id', 'transaction_id', 'hash', 'created_at', 'updated_at',
-                    'paid', 'fiscalized'
+                    'paid', 'fiscalized', 'refunded', 'refund_fiscalized'
                 ],
                 'public' => [
                     'order_number', 'valid_through',
