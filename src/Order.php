@@ -262,15 +262,43 @@ class Order extends Model
 
 
     /**
-     * Возвращает список заказов из БД, у которых свойство paid в заданном диапазоне.
-     * После этого следует проверить статус каждого найденного заказа на шлюзе,
-     * чтобы подтвердить оплату (и исключить возможность смены его статуса в БД вручную)
+     * Возвращает список заказов из БД, оплаченных за период
      *
      * @param  null $from
      * @param  null $to
      * @return array
      */
     public static function getPaidOrdersByDateRange($from = null, $to = null)
+    {
+        return self::getOrdersByDateRangeAndStatus($from, $to, Common::ORDER_STATUS_DEPOSITED);
+    }
+
+
+    /**
+     * Возвращает список заказов из БД, по которым за указанный период был возврат
+     *
+     * @param  null $from
+     * @param  null $to
+     * @return array
+     */
+    public static function getRefundedOrdersByDateRange($from = null, $to = null)
+    {
+        return self::getOrdersByDateRangeAndStatus($from, $to, Common::ORDER_STATUS_REFUNDED);
+    }
+
+
+    /**
+     * Возвращает список заказов из БД, у которых указанный статус в заданном диапазоне.
+     * Например, оплаченные за период или те, по которым были возвраты.
+     * После этого следует проверить статус каждого найденного заказа на шлюзе,
+     * чтобы подтвердить оплату (и исключить возможность смены его статуса в БД вручную)
+     *
+     * @param  null $from
+     * @param  null $to
+     * @param  int  $status
+     * @return array
+     */
+    public static function getOrdersByDateRangeAndStatus($from = null, $to = null, $status = Common::ORDER_STATUS_DEPOSITED)
     {
         $format = 'Y-m-d H:i:s';
         $from = date($format, $from ? strtotime($from) : null);
@@ -284,8 +312,16 @@ class Order extends Model
         }
         $to = date($format, $to);
 
+        switch ($status) {
+            case Common::ORDER_STATUS_REFUNDED:
+                $field = 'refunded';
+                break;
+            default:
+                $field = 'paid';
+        }
+
         $model = new self();
-        return $model->whereBetween('paid', [$from, $to])->get();
+        return $model->whereBetween($field, [$from, $to])->get();
     }
 
 
