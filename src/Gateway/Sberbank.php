@@ -186,6 +186,10 @@ class Sberbank extends Gateway
              * @var Item $item
              */
             foreach ($items as $i => $item) {
+                $item->quantity = preg_match('|^[0-9]+[,.]0+$|', $item->quantity)
+                    ? (int) $item->quantity
+                    : (float) $item->quantity;
+
                 $cartItem = [
                     'positionId' => $i + 1,
                     'name'       => $item->product,
