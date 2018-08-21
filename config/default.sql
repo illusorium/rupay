@@ -2,16 +2,16 @@
 CREATE TABLE `rupay_orders` (
   `id` INT(11) NOT NULL,
   `order_number` VARCHAR(64) NOT NULL,
-  `transaction_id` VARCHAR(128) NOT NULL,
+  `transaction_id` VARCHAR(128) NOT NULL DEFAULT '',
   `hash` VARCHAR(128) NOT NULL,
   `valid_through` DATETIME DEFAULT NULL,
   `buyer` VARCHAR(256) NOT NULL,
-  `email` VARCHAR(64) NOT NULL,
-  `phone` VARCHAR(64) NOT NULL,
-  `address` VARCHAR(256) NOT NULL,
-  `passport` VARCHAR(256) NOT NULL,
-  `inn` VARCHAR(16) NOT NULL,
-  `comment` VARCHAR(1024) NOT NULL,
+  `email` VARCHAR(64) NOT NULL DEFAULT '',
+  `phone` VARCHAR(64) NOT NULL DEFAULT '',
+  `address` VARCHAR(256) NOT NULL DEFAULT '',
+  `passport` VARCHAR(256) NOT NULL DEFAULT '',
+  `inn` VARCHAR(16) NOT NULL DEFAULT '',
+  `comment` VARCHAR(1024) NOT NULL DEFAULT '',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME DEFAULT NULL,
   `paid` DATETIME DEFAULT NULL,
@@ -33,7 +33,7 @@ CREATE TABLE `rupay_orders_items` (
   `product` VARCHAR(256) NOT NULL,
   `price` DECIMAL(20,2) NOT NULL,
   `quantity` DECIMAL(20,3) NOT NULL,
-  `units` VARCHAR(16) NOT NULL
+  `units` VARCHAR(16) NOT NULL DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE `rupay_orders_items`
@@ -52,10 +52,10 @@ CREATE TABLE `rupay_orders_payments` (
   `id` INT(11) NOT NULL,
   `order_id` INT(11) NOT NULL,
   `gateway` VARCHAR(64) NOT NULL,
-  `is_outdated` TINYINT(1) NOT NULL,
+  `is_outdated` TINYINT(1) NOT NULL DEFAULT 0,
   `payment_url` VARCHAR(256) DEFAULT NULL,
   `gateway_order_id` VARCHAR(256) DEFAULT NULL,
-  `data` VARCHAR(1024) NOT NULL,
+  `data` VARCHAR(1024) NOT NULL DEFAULT '',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
