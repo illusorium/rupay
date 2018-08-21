@@ -110,7 +110,7 @@ class Sberbank extends Gateway
         }
 
         if ($orderNumber !== $order->order_number) {
-            $options['jsonParams']  = json_encode(['merchantOrderId' => $order->order_number]);
+            $options['jsonParams'] = json_encode(['merchantOrderId' => $order->order_number]);
         }
 
         if (!empty($this->config['currency'])) {

@@ -26,6 +26,5 @@ class Item extends Model
             throw new Exception("Updating item of order that has been paid already is forbidden");
         }
         parent::__set($key, $value);
-        var_dump($this->toArray());
     }
 }

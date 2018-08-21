@@ -52,12 +52,20 @@ class Validation
 
     public static function validateItem(&$item)
     {
-        foreach (['price', 'quantity'] as $field) {
-            $item[$field] = str_replace(',', '.', $item[$field]);
+        $item['price'] = str_replace(',', '.', $item['price']);
+        $item['quantity'] = str_replace(',', '.', $item['quantity']);
 
+        foreach (['price', 'quantity'] as $field) {
             if (!is_numeric($item[$field]) || floatval($item[$field]) <= 0) {
                 throw new Exception("$field must be greater than 0");
             }
+        }
+
+        $cost = $item['price'] * $item['quantity'];
+        if ((string) round($cost, 2) !== (string) $cost) {
+            throw new Exception(
+                "Invalid item cost: {$item['quantity']} * {$item['price']} = $cost - too long fractional part"
+            );
         }
     }
 
