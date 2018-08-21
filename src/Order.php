@@ -42,7 +42,7 @@ class Order extends Model
 
 
     /**
-     * @param  array $criteria
+     * @param  array|string $criteria
      * @return false|Order
      * @throws Exception
      * @throws \Exception
@@ -55,7 +55,7 @@ class Order extends Model
 
         $modelOrder = new self();
 
-        if (is_scalar($criteria)) {
+        if (is_string($criteria)) {
             $modelOrder = $modelOrder->find($criteria);
         } elseif (Arr::is_array($criteria)) {
             foreach ($criteria as $field => $criterion) {
@@ -80,6 +80,7 @@ class Order extends Model
             $modelOrder->delete();
             return false;
         }
+
         return $modelOrder;
     }
 
