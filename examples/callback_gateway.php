@@ -19,23 +19,32 @@ if ($order) {
     if ($gateway->checkSignature($order)) {
 
         if ($status = $gateway->getCallbackOperationStatus()) {
-            if ($status['operation'] = $gateway::ORDER_STATUS_DEPOSITED && !empty($status['status'])) {
-                $order->paid = date('Y-m-d H:i:s');
-                $order->save();
+            if (!empty($status['status'])) {
+                // successful operation
 
-                /*
-                 * Отправка чека на сервер фискализации
-                 *
-                 * TODO $till->assignedToGateway()
-                 * если касса привязана к шлюзу (напрмер, Сбербанк + АТОЛ),
-                 * шлюз отправляет чеки автоматически, отправка чека вручную не требуется
-                 */
-//                $till = Rupay\Till::create();
-//                $till->sendReceipt($order);
+                if ($status['operation'] === $gateway::ORDER_STATUS_DEPOSITED) {
+                    $order->paid = date('Y-m-d H:i:s');
+                    $order->save();
+
+                    // Отправка чека на сервер фискализации ($till->assignedToGateway())
+
+                } elseif ($status['operation'] === $gateway::ORDER_STATUS_REFUNDED) {
+                    $order->refunded = date('Y-m-d H:i:s');
+                    $order->save();
+
+                    // Отправка чека возврата на сервер фискализации ($till->assignedToGateway())
+                } else {
+                    // another operation
+                }
+            } else {
+                // unsuccessful operation (e.g. insufficient funds on a card)
             }
+        } else {
+            // unknown operation
         }
         $response = $gateway->setResponseSuccess();
     } else {
+        // invalid data - we're not sure that sender is real gateway
         $response = $gateway->setResponseFail();
     }
 } else {

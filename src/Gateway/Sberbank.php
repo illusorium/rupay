@@ -186,9 +186,7 @@ class Sberbank extends Gateway
              * @var Item $item
              */
             foreach ($items as $i => $item) {
-                $item->quantity = preg_match('|^[0-9]+[,.]0+$|', $item->quantity)
-                    ? (int) $item->quantity
-                    : (float) $item->quantity;
+                $item->quantity = round($item->quantity, 3);
 
                 $cartItem = [
                     'positionId' => $i + 1,
@@ -197,7 +195,7 @@ class Sberbank extends Gateway
                         'value'   => $item->quantity,
                         'measure' => $item->units
                     ],
-                    'itemAmount' => $item->getCost() * 100,
+                    'itemAmount' => round($item->getCost() * 100),
                     'itemCode'   => $options['orderNumber'] . '-' . $i
                 ];
 
@@ -205,7 +203,7 @@ class Sberbank extends Gateway
                     $cartItem['tax'] = [
                         'taxType' => $tax
                     ];
-                    $cartItem['itemPrice']  = $item->price * 100;
+                    $cartItem['itemPrice']  = round($item->price * 100);
                 }
 
                 array_push($orderBundle['cartItems']['items'], $cartItem);
