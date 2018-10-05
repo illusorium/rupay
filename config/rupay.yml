@@ -3,7 +3,11 @@ settings:
     tax_system: 0 # Система налогообложения (see Helper\FZ54)
 
 order:
-    link_lifetime: '3 days' # Время действия ссылки на оплату заказа по умолчанию
+    link_lifetime: '20 minutes' # Время действия ссылки на оплату заказа по умолчанию
+
+    # Если true, срок действия ссылки на оплату на шлюзе будет браться из valid_through заказа, если это значение задано
+    # Если false или valid_through у заказа не задан, срок действия заказа на шлюзе будет передаваться из link_lifetime
+    use_valid_through: true
 
 # Платежные шлюзы
 gateway:

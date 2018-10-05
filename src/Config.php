@@ -43,10 +43,11 @@ class Config
 
     /**
      * @param  string $path
+     * @param  mixed  $default
      * @return mixed
      * @throws Exception
      */
-    public static function get($path = null)
+    public static function get($path = null, $default = null)
     {
         if (empty(self::$_parsed)) {
             new self();
@@ -55,6 +56,6 @@ class Config
         if (empty($path) || $path === '*') {
             return self::$_parsed;
         }
-        return Arr::path(self::$_parsed, $path);
+        return Arr::path(self::$_parsed, $path, $default);
     }
 }

@@ -127,10 +127,18 @@ class Sberbank extends Gateway
             $options['description'] = $description;
         }
 
-        if ($validThrough = $order->validThrough()) {
+        $useValidThrough = Config::get('order.use_valid_through', true);
+
+        if ($useValidThrough && !empty($order->valid_through)) {
+            $validThrough = is_numeric($order->valid_through)
+                ? $order->valid_through
+                : strtotime($order->valid_through);
             $options['expirationDate'] = date('c', $validThrough);
-        } elseif (!empty($this->config['link_lifetime'])) {
-            $options['sessionTimeoutSecs'] = strtotime($this->config['link_lifetime']);
+        } elseif ($linkLifetime = strtotime(Config::get('order.link_lifetime'), 0)) {
+            // если установленное время на оплату меньше 5 минут, не передаем ничего - будет по умолчанию (20 минут)
+            if ($linkLifetime > 300) {
+                $options['sessionTimeoutSecs'] = $linkLifetime;
+            }
         }
 
         if (!empty($this->config['send_items'])) {
