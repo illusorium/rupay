@@ -2,6 +2,7 @@
 namespace Rupay\Gateway;
 
 use GuzzleHttp\Exception\ClientException;
+use Rupay\Common;
 use Rupay\Config;
 use Rupay\Exception;
 use Rupay\Gateway;
@@ -325,6 +326,22 @@ class Sberbank extends Gateway
 
             $response = $e->getResponse()->getBody()->getContents();
             throw new Exception($response, $e->getCode());
+        }
+    }
+
+
+    public function getPaymentStatusCode($object)
+    {
+        $statusData = $this->getPaymentStatus($object);
+        $paymentState = Arr::path($statusData, 'paymentAmountInfo.paymentState');
+        switch ($paymentState) {
+            case 'DEPOSITED': return Common::ORDER_STATUS_DEPOSITED;
+            case 'REVERSED' : return Common::ORDER_STATUS_REVERSED;
+            case 'REFUNDED' : return Common::ORDER_STATUS_REFUNDED;
+            case 'APPROVED' : return Common::ORDER_STATUS_APPROVED;
+            case 'DECLINED' : return Common::ORDER_STATUS_DECLINED;
+            case 'CREATED'  : return Common::ORDER_STATUS_CREATED;
+            default: return false;
         }
     }
 

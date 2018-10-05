@@ -7,11 +7,12 @@ use GuzzleHttp\Psr7\Response;
 class Common
 {
     // Possible operation statuses (could be used in processing of callback notifications)
-    const ORDER_STATUS_DEPOSITED = 1; // операция завершения
-    const ORDER_STATUS_REVERSED  = 2; // операция отмены
-    const ORDER_STATUS_REFUNDED  = 3; // операция возврата
-    const ORDER_STATUS_APPROVED  = 4; // операция удержания (холдирования) суммы (для двухстадийных платежей)
-    const ORDER_STATUS_DECLINED  = 5; // заказ отклонен (например, закончилось время жизни заказа на шлюзе)
+    const ORDER_STATUS_CREATED   = 1; // заказ создан на шлюзе
+    const ORDER_STATUS_APPROVED  = 2; // операция удержания (холдирования) суммы (для двухстадийных платежей)
+    const ORDER_STATUS_DEPOSITED = 3; // операция завершения
+    const ORDER_STATUS_DECLINED  = 4; // заказ отклонен (например, закончилось время жизни заказа на шлюзе)
+    const ORDER_STATUS_REVERSED  = 5; // операция отмены
+    const ORDER_STATUS_REFUNDED  = 6; // операция возврата
 
     protected $config = [];
     protected $requiredConfigParams = ['login', 'password'];

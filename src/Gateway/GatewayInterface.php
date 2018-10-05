@@ -65,6 +65,7 @@ interface GatewayInterface
      * @param  Order  $order
      * @param  string $orderNumber  Override order number for the gateway (by default it is $order->order_number)
      * @param  string $description  Custom order description for the gateway's payment page
+     * @throws Exception
      * @return mixed
      */
     public function registerOrder($order, $orderNumber = null, $description = null);
@@ -76,6 +77,21 @@ interface GatewayInterface
      * @throws Exception
      */
     public function getPaymentStatus($object);
+
+
+    /**
+     * Код статуса платежа. Используется для более "читабельного" сравнения в коде
+     * Например, у Сбербанка при запросе статуса через
+     * $status = getPaymentStatus($order) статус будет в
+     * $status['paymentAmountInfo']['paymentState'] (DEPOSITED, DECLINED и т.д.)
+     * В этом методе у каждого класса должно быть прописано сопоставление всех подобных статусов
+     * константам ORDER_STATUS_* из класса Common
+     *
+     * @param  Payment|Order $object
+     * @return mixed
+     * @throws Exception
+     */
+    public function getPaymentStatusCode($object);
 
 
     /**
