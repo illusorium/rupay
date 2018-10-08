@@ -162,17 +162,8 @@ class Modulkassa extends Till
             throw new Exception("Buyer email is required to send order to Modulkassa fiscalization service");
         }
 
-        /*
-         * TODO
-         * "старый" transaction_id еще может понадобиться
-         * (например, при проверке статуса, если orderNumber=transaction_id);
-         * придумать более надежное решение
-         */
-        $transactionId = $order->checkTransactionId(true);
-        $order->save();
-
         $requestData = [
-            'id' => $transactionId,
+            'id' => $order->checkTransactionId(),
             'checkoutDateTime' => date('c'),
             'docNum' => $order->order_number,
             'docType' => $docType,
