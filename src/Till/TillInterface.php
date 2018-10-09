@@ -39,13 +39,12 @@ interface TillInterface
      * Prepare a document (receipt) with order information and send it to a fiscalization service
      *
      * @param  Order  $order
-     * @param  string $responseURL  URL to process webhooks with information about changes of receipt status
      * @param  int    $docType      Code of operation type: sale, refund, etc.
      * @param  string $paymentType  Payment method: card, cash, etc.
      * @return mixed
      * @throws Exception
      */
-    public function sendReceipt($order, $responseURL = null, $docType = null, $paymentType = null);
+    public function sendReceipt($order, $docType = null, $paymentType = null);
 
 
     /**

@@ -141,11 +141,17 @@ class Modulkassa extends Till
 
 
     /**
+     * TODO
+     * В качестве id документа передается значение transaction_id заказа.
+     * Для каждого документа (чека) оно должно быть уникальным.
+     * Из метода было убрано обновление transaction_id перед отправкой любого чека.
+     * Необходимость обновления параметров заказа нужно контролировать либо вручную, либо в других методах,
+     * но никак не в методе, который должен просто отправить данные для фискализации чека.
+     *
      * {@inheritdoc}
      */
     public function sendReceipt(
         $order,
-        $responseURL = null,
         $docType = self::ORDER_STATUS_DEPOSITED,
         $paymentType = self::PAYMENT_CARD
     ) {
@@ -172,10 +178,7 @@ class Modulkassa extends Till
             'moneyPositions' => []
         ];
 
-        if (is_null($responseURL)) {
-            $responseURL = Arr::get($this->config, 'responseURL');
-        }
-        if (!empty($responseURL)) {
+        if ($responseURL = Arr::get($this->config, 'responseURL')) {
             $requestData['responseURL'] = \Rupay\Helper\Order::fillResponseURL($responseURL, $order);
         }
 
