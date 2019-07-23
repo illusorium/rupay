@@ -4,7 +4,7 @@
     "description": "",
     "require": {
         "guzzlehttp/guzzle": "^6.3",
-        "symfony/yaml": "^3.3",
+        "symfony/yaml": "^3.4 || ^4.3",
         "illuminate/database": "^5.4",
         "ext-json": "^1.2"
     },

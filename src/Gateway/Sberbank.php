@@ -2,6 +2,8 @@
 namespace Rupay\Gateway;
 
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\GuzzleException;
+use InvalidArgumentException;
 use Rupay\Common;
 use Rupay\Config;
 use Rupay\Exception;
@@ -51,7 +53,7 @@ class Sberbank extends Gateway
     {
         parent::validateConfig($config);
         if (!empty($config['currency']) && !in_array($config['currency'], ISO4217::$currencyCodes)) {
-            throw new \InvalidArgumentException("Incorrect currency code \"{$config['currency']}\"");
+            throw new InvalidArgumentException("Incorrect currency code \"{$config['currency']}\"");
         }
         if (!empty($config['method'])) {
             $method = strtoupper($config['method']);
@@ -165,6 +167,8 @@ class Sberbank extends Gateway
                     case FZ54::VAT_18:     $tax = 3; break;
                     case FZ54::VAT_10_110: $tax = 4; break;
                     case FZ54::VAT_18_118: $tax = 5; break;
+                    case FZ54::VAT_20:     $tax = 6; break;
+                    case FZ54::VAT_20_120: $tax = 7; break;
                     default:
                         throw new Exception("Invalid vat tag value ($vat)");
                 }
@@ -231,7 +235,7 @@ class Sberbank extends Gateway
      * @param $params
      * @return mixed
      * @throws Exception
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     protected function sendRegisterRequest($params)
     {
@@ -293,7 +297,7 @@ class Sberbank extends Gateway
             $payment = $object;
             $order = $payment->order;
         } else {
-            throw new \InvalidArgumentException("getPaymentStatus() expects argument of type \Rupay\Order or \Rupay\Payment");
+            throw new InvalidArgumentException("getPaymentStatus() expects argument of type \Rupay\Order or \Rupay\Payment");
         }
 
         if (!empty($payment->gateway_order_id)) {
