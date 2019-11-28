@@ -16,7 +16,7 @@ class Validation
         if (!Arr::is_array($data)) {
             throw new Exception('Order data must be an array');
         }
-        foreach (['order_number', 'buyer'] as $field) {
+        foreach (['order_number'] as $field) {
             if (empty($data[$field])) {
                 throw new Exception("$field is required and must not be empty");
             }
