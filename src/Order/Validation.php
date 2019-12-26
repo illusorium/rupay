@@ -24,7 +24,7 @@ class Validation
         if (!empty($data['email']) && !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
             throw new Exception("Email {$data['email']} is not valid");
         }
-        if (!empty($data['transaction_id']) && !preg_match('|^[\d[:alpha:]]+$|ui', $data['transaction_id'])) {
+        if (!empty($data['transaction_id']) && !preg_match('|^[\d[:alpha:]-]+$|ui', $data['transaction_id'])) {
             throw new Exception("Transaction ID must consist only of letters and digits");
         }
     }
