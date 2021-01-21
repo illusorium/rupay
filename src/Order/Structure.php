@@ -20,7 +20,7 @@ class Structure
                     'paid', 'fiscalized', 'refunded', 'refund_fiscalized'
                 ],
                 'public' => [
-                    'order_number', 'valid_through',
+                    'order_number', 'date', 'valid_through',
                     'buyer', 'email', 'phone', 'address',
                     'passport', 'inn', 'comment'
                 ]

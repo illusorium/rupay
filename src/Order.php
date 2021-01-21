@@ -104,6 +104,10 @@ class Order extends Model
      */
     public static function createOrder(array $attributes = [])
     {
+        if (!empty($attributes['date'])) {
+            $attributes['date'] = date('Y-m-d H:i:s', strtotime($attributes['date']));
+        }
+
         if (!empty($attributes['valid_through'])) {
             $attributes['valid_through'] = date('Y-m-d H:i:s', strtotime($attributes['valid_through']));
         } elseif ($lifetime = Config::get('order.link_lifetime')) {
@@ -150,6 +154,12 @@ class Order extends Model
 
             foreach (Structure::getOrderFields('public') as $field) {
                 $order->$field = Arr::get($orderData, $field, '');
+            }
+
+            if (!empty($orderData['date'])) {
+                $order->date = date('Y-m-d H:i:s', strtotime($orderData['date']));
+            } else {
+                $order->date = null;
             }
 
             if (!empty($orderData['valid_through'])) {

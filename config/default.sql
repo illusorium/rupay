@@ -4,6 +4,7 @@ CREATE TABLE `rupay_orders` (
   `order_number` VARCHAR(64) NOT NULL,
   `transaction_id` VARCHAR(128) NOT NULL DEFAULT '',
   `hash` VARCHAR(128) NOT NULL,
+  `date` DATETIME DEFAULT NULL,
   `valid_through` DATETIME DEFAULT NULL,
   `buyer` VARCHAR(256) NOT NULL,
   `email` VARCHAR(64) NOT NULL DEFAULT '',
