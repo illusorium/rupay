@@ -2,6 +2,8 @@
 namespace Rupay\Till;
 
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\GuzzleException;
+use InvalidArgumentException;
 use Rupay\Helper\Arr;
 use Rupay\Helper\FZ54;
 use Rupay\Exception;
@@ -9,7 +11,7 @@ use Rupay\Order;
 use Rupay\Till;
 
 /**
- * @link https://support.modulkassa.ru/upload/medialibrary/abb/api-avtomaticheskoy-fiskalizatsii-chekov-internet_magazinov-_ver.1.2_.pdf
+ * @link https://modulkassa.ru/fs/files/API_avtomaticheskoj_fiskalizatsii.pdf
  *
  * @package Rupay\Till
  */
@@ -56,7 +58,7 @@ class Modulkassa extends Till
     {
         parent::validateConfig($config);
         if (!in_array(Arr::get($config, 'vat_tag'), FZ54::$vatTags)) {
-            throw new \InvalidArgumentException('Incorrect vat_tag value in modulkassa config');
+            throw new InvalidArgumentException('Incorrect vat_tag value in modulkassa config');
         }
     }
 
@@ -67,7 +69,7 @@ class Modulkassa extends Till
      * @param  array  $body
      * @return array
      * @throws Exception
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     protected function requestWrapper($method, $uri, $body = null)
     {
@@ -189,7 +191,7 @@ class Modulkassa extends Till
                     'name' => $item->product,
                     'price' => $item->price,
                     'quantity' => $item->quantity,
-                    'measure' => $item->units,
+//                    'measure' => $item->units,
                     'vatTag' => $this->config['vat_tag']
                 ];
             }
