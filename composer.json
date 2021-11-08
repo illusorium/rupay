@@ -6,7 +6,7 @@
         "guzzlehttp/guzzle": "^6.3",
         "symfony/yaml": "^3.4 || ^4.3",
         "illuminate/database": "^5.8.36",
-        "ext-json": "^1.2"
+        "ext-json": "*"
     },
     "license": "MIT",
     "authors": [
