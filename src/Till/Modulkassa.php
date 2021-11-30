@@ -17,7 +17,7 @@ use Rupay\Till;
  */
 class Modulkassa extends Till
 {
-    const BASE_URI_TEST = 'https://demo-fn.avanpos.com/fn';
+    const BASE_URI_TEST = 'https://demo.modulpos.ru/api/fn';
     const BASE_URI_PROD = 'https://service.modulpos.ru/api/fn';
 
     /**
