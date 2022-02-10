@@ -292,7 +292,7 @@ class Sberbank extends Gateway
 
         if ($object instanceof Order) {
             $order = $object;
-            $payment = $object->payment;
+            $payment = $object->payments->firstWhere('gateway', $this->getKey());
         } elseif ($object instanceof Payment) {
             $payment = $object;
             $order = $payment->order;

@@ -12,7 +12,8 @@ class Common
     const ORDER_STATUS_DEPOSITED = 3; // операция завершения
     const ORDER_STATUS_DECLINED  = 4; // заказ отклонен (например, закончилось время жизни заказа на шлюзе)
     const ORDER_STATUS_REVERSED  = 5; // операция отмены
-    const ORDER_STATUS_REFUNDED  = 6; // операция возврата
+    const ORDER_STATUS_REFUNDED  = 6; // есть успешные операции Полного возврата/Частичного возврата\
+    const ORDER_STATUS_ON_PAYMENT= 9; // ожидает подтверждения платежа от СБП
 
     protected $config = [];
     protected $requiredConfigParams = ['login', 'password'];

@@ -48,17 +48,18 @@ abstract class Gateway extends Common implements Gateway\GatewayInterface, Callb
         /**
          * @var Payment $payment
          */
-        if ($payment = $order->payment) {
-            if ($payment->gateway !== $this->getKey()) {
-                throw new Exception("Order is assigned to another gateway");
-            }
+        if ($payment = $order->payments()->where('gateway', $this->getKey())->first()) {
+//            if ($payment->gateway !== $this->getKey()) {
+//                throw new Exception("Order is assigned to another gateway");
+//            }
             return $payment;
         }
 
         if ($createIfNotExists) {
             $payment = new Payment();
             $payment->gateway = $this->getKey();
-            $order->payment()->save($payment);
+            $payment->order()->associate($order);
+            $payment->save();
             return $payment;
         } else {
             return false;
