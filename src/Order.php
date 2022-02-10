@@ -6,7 +6,7 @@ use Rupay\Order\Structure;
 
 class Order extends Model
 {
-    protected $with = ['orderItems', 'payment'];
+    protected $with = ['orderItems', 'payments'];
 
     public function __construct(array $attributes = [])
     {
@@ -147,9 +147,12 @@ class Order extends Model
                 throw new Exception("Order $orderNumber already exists");
             }
 
-            if (!empty($order->payment)) {
+            if (!empty($order->payments)) {
                 // order data has changed, so mark payment data as not actual
-                $order->payment->is_outdated = true;
+                $order->payments->map(function ($payment) {
+                    $payment->is_outdated = true;
+                    return $payment;
+                });
             }
 
             foreach (Structure::getOrderFields('public') as $field) {
@@ -237,9 +240,20 @@ class Order extends Model
         /**
          * @var Payment $payment
          */
-        $payment = $this->payment;
-        if (!empty($payment) && $payment->exists && in_array($key, $publicFields)) {
-            $payment->is_outdated = true;
+        $payments = $this->payments;
+        if (
+            !empty($payments)
+            &&
+            $payments->every(function ($payment) {
+                return $payment->exists;
+            })
+            &&
+            in_array($key, $publicFields)
+        ) {
+            $payments->map(function ($payment) {
+                $payment->is_outdated = true;
+                return $payment;
+            });
         }
 
         parent::__set($key, $value);
@@ -261,8 +275,10 @@ class Order extends Model
                 $this->orderItems()->save($item);
             }
 
-            if ($this->payment) {
-                $this->payment->save();
+            if ($this->payments) {
+                $this->payments->each(function ($payment) {
+                    $payment->save();
+                });
             }
 
             $this->refresh();
@@ -381,8 +397,13 @@ class Order extends Model
         return $this->hasMany('\Rupay\Item', 'order_id');
     }
 
-    public function payment()
+    public function payments()
     {
-        return $this->hasOne('\Rupay\Payment', 'order_id');
+        return $this->hasMany('\Rupay\Payment', 'order_id');
     }
+
+    //    public function payment()
+    //    {
+    //        return $this->hasOne('\Rupay\Payment', 'order_id');
+    //    }
 }

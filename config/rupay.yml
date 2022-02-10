@@ -30,6 +30,15 @@ gateway:
 #        callback_use_checksum: 1 # Настроено получение уведомлений обратного вызова с контрольной суммой
 #        secret_key: 'top_secret' # Секретный ключ для проверки корректности контрольной суммы в callback-запросах
 
+    SberbankSBP:
+        memberID:
+        clientID: # https://api.developer.sber.ru/how-to-use/create_app
+        idQR:
+        tid:
+        clientSecret: # https://api.developer.sber.ru/how-to-use/create_app
+        certPath: # https://api.developer.sber.ru/how-to-use/create_certificate
+        certPassword:
+
     monetaru:
         MNT_ID: 12345678
         DATA_INTEGRITY_CODE: 'secret_code'
