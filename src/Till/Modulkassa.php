@@ -87,7 +87,7 @@ class Modulkassa extends Till
             $response = $e->getResponse()->getBody()->getContents();
             $jsonResponse = \GuzzleHttp\json_decode($response);
 
-            if ($jsonResponse && $jsonResponse->message) {
+            if ($jsonResponse && isset($jsonResponse->message) && $jsonResponse->message) {
                 $message = $jsonResponse->message;
             } else {
                 $message = $response;
