@@ -79,7 +79,7 @@ class SberbankSBP extends Gateway
         $data = [
             'order_number' => $orderNumber ?? $order->order_number,
             'order_create_date' => $order->created_at->format('Y-m-d\TH:i:s\Z'),
-            'order_sum' => (int)$order->getSum() * 100,
+            'order_sum' => (int)($order->getSum() * 100),
             'currency' => '643'
         ];
         //Большая вероятность, что заказ будет перерегистрироваться, поэтому делаем номер заказа уникальным
