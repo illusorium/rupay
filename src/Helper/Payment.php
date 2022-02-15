@@ -26,6 +26,7 @@ class Payment
     public static function getPaymentsWithRecentActivity($gateway, $hours, $ignoreId = [])
     {
         return \Rupay\Payment::query()
+            ->where('created_at', '<=', Carbon::now()->subDays(3))
             ->where('updated_at', '>=', Carbon::now()->subHours($hours))
             ->where('gateway', '=', $gateway->getKey())
             ->whereNotIn('id', $ignoreId)
