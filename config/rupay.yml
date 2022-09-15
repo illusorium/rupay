@@ -30,6 +30,17 @@ gateway:
 #        callback_use_checksum: 1 # Настроено получение уведомлений обратного вызова с контрольной суммой
 #        secret_key: 'top_secret' # Секретный ключ для проверки корректности контрольной суммы в callback-запросах
 
+    sberbankBNPL:
+        userName: 'merchant-api'
+        password: 'xxx'
+        test_mode: 1
+        success_url: 'https://example.org/payment/success.html'
+        fail_url: 'https://example.org/payment/fail.html'
+
+        #send_items: 1         # Нужно ли отправлять содержимое корзины на шлюз вместе с остальными параметрами заказа
+        #auto_fiscalization: 1 # На шлюзе настроена автоматическая фискализация чеков (например, Сбербанк + Атол.Онлайн)
+
+
     SberbankSBP:
         memberID:
         clientID: # https://api.developer.sber.ru/how-to-use/create_app
