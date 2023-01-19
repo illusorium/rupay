@@ -55,7 +55,14 @@ class Common
             self::$instances[$type][$class] = new $class($config);
 
             if (empty(self::$client)) {
-                self::$client = new Client();
+                $clientOptions = [];
+                if (!empty($config['pem']) && file_exists($config['pem'])) {
+                    $clientOptions['verify'] = $config['pem'];
+                } elseif (!empty(Config::get("$type.pem")) && file_exists(Config::get("$type.pem"))) {
+                    $clientOptions['verify'] = Config::get("$type.pem");
+                }
+
+                self::$client = new Client($clientOptions);
             }
         }
 
