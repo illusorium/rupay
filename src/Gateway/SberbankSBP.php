@@ -407,15 +407,19 @@ class SberbankSBP extends Gateway
     public function findOrderByRequestData($data = [])
     {
         if (empty($data)) {
-            $data = $_GET;
+            return null;
         }
 
-        $customField = Arr::get($this->config, 'orderNumber');
-        $field = $customField ?: 'order_number';
+        $payment = $this->findPaymentByRequestData($data);
+        return $payment ? $payment->order : null;
+    }
 
-        return Order::findOrder([
-            $field => urldecode(Arr::get($data, 'orderNumber'))
-        ]);
+    /**
+     * {@inheritdoc}
+     */
+    public function findPaymentByRequestData($data)
+    {
+        return Payment::findPayment(['gateway_order_id' => Arr::get($data, 'orderId')]);
     }
 
 
@@ -467,7 +471,7 @@ class SberbankSBP extends Gateway
     public function getCallbackOperationStatus($data = [])
     {
         if (empty($data)) {
-            $data = $_GET;
+            return null;
         }
 
         if (empty($data['orderState'])) {
@@ -479,6 +483,6 @@ class SberbankSBP extends Gateway
 
     public function checkSignature($order, $data = [])
     {
-        throw new \Exception('Not used for SBP');
+        return ($this->config['idQR'] === $data['tid']) && ($this->config['memberID'] === $data['memberId']);
     }
 }
