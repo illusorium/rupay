@@ -336,11 +336,17 @@ class SberbankSBP extends Gateway
         } else {
             throw new InvalidArgumentException('getPaymentStatus() expects argument of type \Rupay\Order or \Rupay\Payment');
         }
+
         $currentStatus = $this->getPaymentStatus($payment);
-        $orderOperationParams = $currentStatus['order_operation_params'][0] ?? null;
-        if (($orderOperationParams['operation_type'] ?? null) !== 'PAY') {
+        $orderOperationParams = $currentStatus['order_operation_params'];
+        $orderOperationParams = array_filter($orderOperationParams, function ($o) {
+            return $o['response_code'] === '00' && $o['operation_type'] === 'PAY';
+        });
+        if (!$orderOperationParams) {
             return null;
         }
+        $orderOperation = $orderOperationParams[0];
+
         try {
             $response = self::$client->request(
                 'POST',
@@ -359,8 +365,8 @@ class SberbankSBP extends Gateway
                             'id_qr' => $this->config['idQR'],
                             'tid' => $this->config['idQR'],
                             'operation_currency' => '643',
-                            'operation_id' => $orderOperationParams['operation_id'],
-                            'auth_code' => $orderOperationParams['auth_code'],
+                            'operation_id' => $orderOperation['operation_id'],
+                            'auth_code' => $orderOperation['auth_code'],
                             'operation_type' => 'REFUND',
                             'operation_description' => "Возврат по счету {$order->order_number}",
                         ]
