@@ -345,6 +345,7 @@ class SberbankSBP extends Gateway
         if (!$orderOperationParams) {
             return null;
         }
+        $orderOperationParams = array_values($orderOperationParams);
         $orderOperation = $orderOperationParams[0];
 
         try {
