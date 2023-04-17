@@ -32,9 +32,9 @@ class SberbankSBP extends Gateway
 
     protected $preregisterOrder = true;
 
-    protected $baseURI = 'https://api.sberbank.ru:8443/prod/qr/order/v3';
+    protected $baseURI = 'https://mc.api.sberbank.ru/prod/qr/order/v3';
 
-    const URI_TOKEN = 'https://api.sberbank.ru:8443/prod/tokens/v2/oauth';
+    const URI_TOKEN = 'https://mc.api.sberbank.ru/prod/tokens/v3/oauth';
 
     protected function __construct($config)
     {
