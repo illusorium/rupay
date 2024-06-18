@@ -32,6 +32,8 @@ class Sberbank extends Gateway
     const BASE_URI_TEST = 'https://3dsec.sberbank.ru/payment/rest';
     const BASE_URI_PROD = 'https://securepayments.sberbank.ru/payment/rest';
 
+    private $attemptsLimit = 5;
+
 
     protected function __construct($config)
     {
@@ -239,24 +241,39 @@ class Sberbank extends Gateway
      */
     protected function sendRegisterRequest($params)
     {
-        try {
-            $response = self::$client->request(
-                $this->method,
-                $this->baseURI . '/register.do',
-                ['form_params' => $params]
-            );
+        for ($i = 0; $i < $this->attemptsLimit; ++$i) {
+            try {
+                $response = self::$client->request(
+                    $this->method,
+                    $this->baseURI . '/register.do',
+                    ['form_params' => $params]
+                );
 
-            $data = \GuzzleHttp\json_decode($response->getBody(), true);
-            if (!empty($data['formUrl'])) {
-                return $data;
-            } else {
-                throw new Exception("Error #{$data['errorCode']} registering order: {$data['errorMessage']}");
+                $data = \GuzzleHttp\json_decode($response->getBody(), true);
+                if (!empty($data['formUrl'])) {
+                    return $data;
+                } else {
+                    throw new Exception("Error #{$data['errorCode']} registering order: {$data['errorMessage']}");
+                }
+            } catch (ClientException $e) {
+
+                if ($i === $this->attemptsLimit - 1) {
+                    $response = $e->getResponse()->getBody()->getContents();
+                    throw new Exception($response, $e->getCode());
+                }
+            } catch (\Exception $e) {
+                $lastException = $e;
             }
-        } catch (ClientException $e) {
 
-            $response = $e->getResponse()->getBody()->getContents();
-            throw new Exception($response, $e->getCode());
+            usleep(200000); // Wait and hope the gateway will wake up
         }
+
+        $msg = "Could not send register request in $this->attemptsLimit attempts";
+        if (!empty($lastException)) {
+            $msg .= ". Last exception: {$lastException->getMessage()}";
+        }
+
+        throw new Exception($msg);
     }
 
 
@@ -317,20 +334,35 @@ class Sberbank extends Gateway
             $options['orderNumber'] = $orderNumber;
         }
 
-        try {
-            $response = self::$client->request(
-                $this->method,
-                $this->baseURI . '/getOrderStatusExtended.do',
-                ['form_params' => $options]
-            );
+        for ($i = 0; $i < $this->attemptsLimit; ++$i) {
+            try {
+                $response = self::$client->request(
+                    $this->method,
+                    $this->baseURI . '/getOrderStatusExtended.do',
+                    ['form_params' => $options]
+                );
 
-            return \GuzzleHttp\json_decode($response->getBody(), true);
+                return \GuzzleHttp\json_decode($response->getBody(), true);
 
-        } catch (ClientException $e) {
+            } catch (ClientException $e) {
 
-            $response = $e->getResponse()->getBody()->getContents();
-            throw new Exception($response, $e->getCode());
+                if ($i === $this->attemptsLimit - 1) {
+                    $response = $e->getResponse()->getBody()->getContents();
+                    throw new Exception($response, $e->getCode());
+                }
+            } catch (\Exception $e) {
+                $lastException = $e;
+            }
+
+            usleep(200000); // Wait and hope the gateway will wake up
         }
+
+        $msg = "Could not check payment status in $this->attemptsLimit attempts";
+        if (!empty($lastException)) {
+            $msg .= ". Last exception: {$lastException->getMessage()}";
+        }
+
+        throw new Exception($msg);
     }
 
 
